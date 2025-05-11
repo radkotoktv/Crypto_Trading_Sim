@@ -13,6 +13,7 @@ public class KrakenAssetPairRepository {
         String select = "SELECT name FROM cryptocurrencies";
         boolean exists = jdbcTemplate.queryForList(select, String.class).stream()
                 .anyMatch(p -> p.equals(currencyName));
+
         if (!exists) {
             String insert = "INSERT INTO cryptocurrencies (name) VALUES (?)";
             jdbcTemplate.update(insert, currencyName);
