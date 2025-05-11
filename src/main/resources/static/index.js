@@ -73,4 +73,20 @@ document.addEventListener("DOMContentLoaded", () => {
         tableBody.innerHTML = "";
         sortedRows.reverse().forEach(row => tableBody.appendChild(row));
     }
+
+    document.getElementById("triggerSqlButton").addEventListener("click", async () => {
+        try {
+            const response = await fetch('/api/assetpairs');
+
+            if (response.ok) {
+                document.getElementById("status").textContent = "SQL script triggered!";
+                console.log("Backend executed the script (check server logs)");
+            } else {
+                throw new Error("Failed to trigger script");
+            }
+        } catch (error) {
+            document.getElementById("status").textContent = "Error: " + error.message;
+            console.error("Error:", error);
+        }
+    });
 });
