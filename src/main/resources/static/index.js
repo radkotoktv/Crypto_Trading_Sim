@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
+    updateBalanceDisplay();
+
+    document.getElementById('buy-button').addEventListener('click', () => {
+        // Your existing buy logic...
+        updateBalanceDisplay(); // Refresh balance after buy
+    });
+
+    document.getElementById('sell-button').addEventListener('click', () => {
+        // Your existing sell logic...
+        updateBalanceDisplay(); // Refresh balance after sell
+    });
+
     const stompClient = new StompJs.Client({
         brokerURL: 'ws://localhost:8080/gs-guide-websocket'
     });
@@ -90,3 +102,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// Function to fetch and display balance
+async function updateBalanceDisplay() {
+    try {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || !user.token) {
+            console.log("User not logged in");
+            return;
+        }
+
+        const response = await fetch(`/api/balance/${user.id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token || ''}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch balance');
+        }
+
+        const balance = await response.json();
+        document.getElementById("balance").innerHTML = `Current Balance: $${balance.toFixed(2)}`;
+    } catch (error) {
+        console.error('Balance update error:', error);
+        document.getElementById("balance").innerHTML = 'Could not load balance';
+    }
+}

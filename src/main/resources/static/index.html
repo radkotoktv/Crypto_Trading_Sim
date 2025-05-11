@@ -4,6 +4,7 @@
     <title>BTC Price Tracker</title>
     <script src="index.js"></script>
     <script src="auth.js"></script>
+    <link rel="stylesheet" href="index.css">
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 </head>
 <body>
@@ -26,13 +27,26 @@
     </thead>
     <tbody id="price-table-body"></tbody>
 </table>
+
+<div id="user-info"></div>
+
+<div>
+    <input type="text" id="crypto-name" placeholder="Enter crypto name">
+    <input type="number" id="quantity" value="1">
+    <button id="buy-button">Buy</button>
+    <button id="sell-button">Sell</button>
+    <br><br>
+    <p id="balance">Current balance: </p>
+</div>
+
+<br><br>
+<button onclick="handleLogout()">Logout</button>
+
 </body>
 </html>
 
-<div id="user-info"></div>
-<button onclick="handleLogout()">Logout</button>
 <script>
-    const user = checkAuth(); // This will redirect if not logged in
+    const user = checkAuth();
     document.getElementById('user-info').innerHTML = `
         <p>Username: ${user.username}</p>
         <p>Email: ${user.email}</p>
