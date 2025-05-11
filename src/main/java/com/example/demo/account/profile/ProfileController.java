@@ -1,5 +1,7 @@
 package com.example.demo.account.profile;
 
+import com.example.demo.account.balance.Balance;
+import com.example.demo.account.balance.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,31 +18,35 @@ public class ProfileController {
     ProfileService profileService;
     @Autowired
     ProfileRepository profileRepository;
+    @Autowired
+    BalanceRepository balanceRepository;
 
     @PostMapping("/create")
-    public ResponseEntity<ProfileDTO> createProfile(@RequestBody ProfileCreateRequestDTO dto) {
+    public ProfileDTO createProfile(@RequestBody ProfileCreateRequestDTO dto) {
         ProfileDTO createdProfile = profileService.createProfile(dto);
         if (createdProfile != null) {
-            return ResponseEntity.ok(createdProfile);
+            Balance balance = new Balance(createdProfile.getId(), 10000.0);
+            balanceRepository.save(balance);
+            return createdProfile;
         } else {
-            return ResponseEntity.badRequest().build();
+            return null;
         }
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long id) {
+    public ProfileDTO getProfileById(@PathVariable Long id) {
         Optional<ProfileDTO> profile = profileService.getProfileById(id);
-        return profile.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return profile.orElse(null);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<ProfileDTO> getProfileByName(@PathVariable String name) {
+    public ProfileDTO getProfileByName(@PathVariable String name) {
         Optional<ProfileDTO> profile = profileService.getProfileByName(name);
-        return profile.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return profile.orElse(null);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+    public Map<String, Object> login(@RequestBody LoginRequest request) {
         Optional<Profile> profileOpt = profileRepository.findByName(request.getUsername());
 
         if (profileOpt.isPresent()) {
@@ -51,9 +57,9 @@ public class ProfileController {
                 response.put("email", profile.getEmail());
                 response.put("id", profile.getId());
                 response.put("token", profile.getUsername() + "-" + System.currentTimeMillis());
-                return ResponseEntity.ok(response);
+                return response;
             }
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return null;
     }
 }

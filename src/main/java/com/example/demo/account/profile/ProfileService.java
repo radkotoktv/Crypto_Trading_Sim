@@ -14,10 +14,17 @@ public class ProfileService {
         Profile profile = new Profile(dto.getUsername(), dto.getPassword_hash(), dto.getEmail(), dto.getCreated_at());
         boolean isSaved = profileRepository.save(profile);
         if (isSaved) {
-            return new ProfileDTO(dto.getUsername(), dto.getEmail(), dto.getCreated_at());
-        } else {
-            return null;
+            Optional<Profile> createdProfile = profileRepository.findByName(dto.getUsername());
+            if (createdProfile.isPresent()) {
+                return new ProfileDTO(
+                        createdProfile.get().getId(),
+                        dto.getUsername(),
+                        dto.getEmail(),
+                        dto.getCreated_at()
+                );
+            }
         }
+        return null;
     }
 
     public Optional<ProfileDTO> getProfileById(Long id) {

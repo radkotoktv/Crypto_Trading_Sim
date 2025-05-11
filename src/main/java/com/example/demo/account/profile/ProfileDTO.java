@@ -9,7 +9,8 @@ public class ProfileDTO {
     private LocalDateTime created_at;
 
     public ProfileDTO() {};
-    public ProfileDTO(String username, String email, LocalDateTime created_at) {
+    public ProfileDTO(Long id, String username, String email, LocalDateTime created_at) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.created_at = created_at;
