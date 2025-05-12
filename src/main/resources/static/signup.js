@@ -2,6 +2,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
 
     form.addEventListener('submit', function(event) {
+        try {
+            const response = await fetch('/api/assetpairs');
+
+            if (!response.ok) {
+                throw new Error("Failed to trigger script");
+            }
+        } catch (error) {
+            document.getElementById("status").textContent = "Error: " + error.message;
+            console.error("Error:", error);
+        }
+
         event.preventDefault();
 
         const userData = {
