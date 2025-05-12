@@ -1,5 +1,5 @@
--- CREATE DATABASE IF NOT EXISTS crypto_trading_sim;
--- USE crypto_trading_sim;
+CREATE DATABASE IF NOT EXISTS crypto_trading_sim;
+USE crypto_trading_sim;
 
 -- Table: users
 CREATE TABLE IF NOT EXISTS users (
@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
 -- Table: cryptocurrencies
 CREATE TABLE IF NOT EXISTS cryptocurrencies (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    -- symbol VARCHAR(10) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -33,7 +32,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     type ENUM('buy', 'sell') NOT NULL,
     quantity DECIMAL(20, 8) NOT NULL,
     unit_price DECIMAL(20, 8) NOT NULL, -- price per 1 coin in USD
-    total_cost DECIMAL(20, 8) GENERATED ALWAYS AS (quantity * unit_price) STORED,
+    total_cost DECIMAL(20, 8) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (crypto_id) REFERENCES cryptocurrencies(id),
