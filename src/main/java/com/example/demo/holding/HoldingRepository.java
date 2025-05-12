@@ -36,7 +36,7 @@ public class HoldingRepository {
         }
     }
 
-    public boolean save(HoldingDTO holding, int quantity) {
+    public boolean save(HoldingDTO holding, double quantity) {
         String sql = "SELECT COUNT(*) FROM holdings WHERE user_id = ? AND crypto_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, holding.getUser_id(), holding.getCrypto_id());
         if (count != null && count > 0) {

@@ -75,4 +75,8 @@ public class KrakenAssetPairService {
         return count;
     }
 
+    public Long getIdByName(String name) {
+        return krakenAssetPairRepository.findIdByName(name);
+    }
+
 }

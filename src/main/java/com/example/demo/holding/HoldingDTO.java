@@ -3,10 +3,10 @@ package com.example.demo.holding;
 public class HoldingDTO {
     private Long user_id;
     private Long crypto_id;
-    private int quantity;
+    private double quantity;
 
     public HoldingDTO() {}
-    public HoldingDTO(Long user_id, Long crypto_id, int quantity) {
+    public HoldingDTO(Long user_id, Long crypto_id, double quantity) {
         this.user_id = user_id;
         this.crypto_id = crypto_id;
         this.quantity = quantity;
@@ -28,7 +28,7 @@ public class HoldingDTO {
         this.crypto_id = crypto_id;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
