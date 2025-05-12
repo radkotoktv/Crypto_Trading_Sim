@@ -1,0 +1,10 @@
+Dependencies for the project:
+
+1) Everything listed in pom.xml
+    1.1) spring-boot-starter-websocket
+    1.2) mysql-connector-j
+    1.3) spring-boot-starter-jdbc
+    1.4) spring-boot-starter-test
+    1.5)org.java-websocket
+
+2) GSON dependency for JSON parsing
