@@ -34,11 +34,13 @@ public class KrakenAssetPairService {
                     .header("Content-Type", "application/json")
                     .build();
 
-            String response = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            String response = httpClient.send(request,
+                                            HttpResponse.BodyHandlers.ofString()).body();
 
             JsonObject assetPairs = JsonParser.parseString(response)
                     .getAsJsonObject()
                     .getAsJsonObject("result");
+
             for (Map.Entry<String, JsonElement> entry : assetPairs.entrySet()) {
                 JsonObject pairInfo = entry.getValue().getAsJsonObject();
                 String status = pairInfo.get("status").getAsString();
@@ -82,7 +84,4 @@ public class KrakenAssetPairService {
     public String getNameById(Long id) {
         return krakenAssetPairRepository.findNameById(id);
     }
-
-
-
 }

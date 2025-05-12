@@ -7,8 +7,17 @@ public class TransactionDTO {
     private double quantity;
     private double unit_price;
     private double total_cost;
-    public TransactionDTO() {}
-    public TransactionDTO(Long user_id, Long crypto_id, String type, double quantity, double unit_price, double total_cost) {
+
+    public TransactionDTO() {
+
+    }
+
+    public TransactionDTO(Long user_id,
+                          Long crypto_id,
+                          String type,
+                          double quantity,
+                          double unit_price,
+                          double total_cost) {
         this.user_id = user_id;
         this.crypto_id = crypto_id;
         this.type = type;

@@ -41,13 +41,24 @@ public class HoldingRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, holding.getUser_id(), holding.getCrypto_id());
         if (count != null && count > 0) {
             String getAmount = "SELECT quantity FROM holdings WHERE user_id = ? AND crypto_id = ?";
-            int currentAmount = jdbcTemplate.queryForObject(getAmount, Integer.class, holding.getUser_id(), holding.getCrypto_id());
+            int currentAmount = jdbcTemplate.queryForObject(getAmount,
+                                                            Integer.class,
+                                                            holding.getUser_id(),
+                                                            holding.getCrypto_id());
 
             String update = "UPDATE holdings SET last_updated = ?, quantity = ? WHERE user_id = ? AND crypto_id = ?";
-            jdbcTemplate.update(update, LocalDateTime.now(), currentAmount + quantity, holding.getUser_id(), holding.getCrypto_id());
+            jdbcTemplate.update(update,
+                          LocalDateTime.now(),
+                            currentAmount + quantity,
+                            holding.getUser_id(),
+                            holding.getCrypto_id());
         } else {
             String insert = "INSERT INTO holdings (user_id, crypto_id, quantity, last_updated) VALUES (?, ?, ?, ?)";
-            jdbcTemplate.update(insert, holding.getUser_id(), holding.getCrypto_id(), quantity, LocalDateTime.now());
+            jdbcTemplate.update(insert,
+                                holding.getUser_id(),
+                                holding.getCrypto_id(),
+                                quantity,
+                                LocalDateTime.now());
         }
         return count == null || count == 0;
     }

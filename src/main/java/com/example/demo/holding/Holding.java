@@ -8,7 +8,10 @@ public class Holding {
     private int quantity;
     private LocalDateTime last_updated;
 
-    public Holding() {}
+    public Holding() {
+
+    }
+
     public Holding(Long user_id, Long crypto_id, int quantity, LocalDateTime last_updated) {
         this.user_id = user_id;
         this.crypto_id = crypto_id;

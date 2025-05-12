@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,56 +32,60 @@ public class SellController {
                         Map.of("error", "Missing user_id or crypto_id")
                 );
             }
-
-            Holding holding = holdingService.getHoldingsById(transaction.getUser_id())
-                    .stream()
-                    .filter(h -> h.getCrypto_id().equals(transaction.getCrypto_id()))
-                    .toList()
-                    .getFirst();
-            double sellingAmount = transaction.getQuantity();
-            if (holding.getQuantity() < sellingAmount) {
+            Holding holding = getHoldingById(transaction.getUser_id(),
+                                            transaction.getCrypto_id());
+            if (holding.getQuantity() < transaction.getQuantity()) {
                 return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "error", "Insufficient funds",
+                        Map.of("error", "Insufficient funds",
                                 "currentBalance", holding.getQuantity(),
-                                "required", sellingAmount
-                        )
-                );
+                                "required", transaction.getQuantity()));
             }
 
-            double newBalance = (transaction.getUnit_price() * sellingAmount) + balanceService.getBalance(transaction.getUser_id());
-            balanceService.saveBalance(transaction.getUser_id(), newBalance);
-
-            holdingService.saveHolding(
-                    transaction.getUser_id(),
-                    transaction.getCrypto_id(),
-                    -transaction.getQuantity()
-            );
-
-            TransactionDTO createdTransaction = transactionService.createTransaction(
-                    new TransactionDTO(
-                            transaction.getUser_id(),
-                            transaction.getCrypto_id(),
-                            transaction.getType(),
-                            transaction.getQuantity(),
-                            transaction.getUnit_price(),
-                            (sellingAmount * transaction.getUnit_price())
-                    )
-            );
-
-            return ResponseEntity.ok(Map.of(
-                    "status", "success",
-                    "transaction", createdTransaction,
-                    "newBalance", newBalance
-            ));
-
+            double newBalance = calculateNewBalance(transaction);
+            updateBalance(transaction, newBalance);
+            updateHolding(transaction);
+            TransactionDTO createdTransaction = createTransactionInController(transaction);
+            return ResponseEntity.ok(Map.of("status", "success",
+                                        "transaction", createdTransaction,
+                                        "newBalance", newBalance));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
-                    Map.of(
-                            "error", "Transaction failed",
-                            "message", e.getMessage()
-                    )
+                    Map.of("error", "Transaction failed",
+                            "message", e.getMessage())
             );
         }
+    }
+
+    private Holding getHoldingById(Long user_id, Long crypto_id) {
+        return holdingService.getHoldingsById(user_id)
+                .stream()
+                .filter(h -> h.getCrypto_id().equals(crypto_id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private double calculateNewBalance(TransactionDTO transaction) {
+        return (transaction.getUnit_price() * transaction.getQuantity()) +
+                balanceService.getBalance(transaction.getUser_id());
+    }
+
+    private void updateBalance(TransactionDTO transaction, double newBalance) {
+        balanceService.saveBalance(transaction.getUser_id(), newBalance);
+    }
+
+    private void updateHolding(TransactionDTO transaction) {
+        holdingService.saveHolding(transaction.getUser_id(),
+                                    transaction.getCrypto_id(),
+                                    -transaction.getQuantity());
+    }
+
+    private TransactionDTO createTransactionInController(TransactionDTO transaction) {
+        return transactionService.createTransaction(
+                new TransactionDTO(transaction.getUser_id(),
+                                    transaction.getCrypto_id(),
+                                    transaction.getType(),
+                                    transaction.getQuantity(),
+                                    transaction.getUnit_price(),
+                           transaction.getQuantity() * transaction.getUnit_price()));
     }
 }

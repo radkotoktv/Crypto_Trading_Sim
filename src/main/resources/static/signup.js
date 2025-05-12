@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             document.getElementById("status").textContent = "Error: " + error.message;
             console.error("Error:", error);
-            return; // stop execution if fetch failed
+            return;
         }
 
         const userData = {

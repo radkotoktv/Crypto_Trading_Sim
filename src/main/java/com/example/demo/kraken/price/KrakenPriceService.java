@@ -21,7 +21,8 @@ public class KrakenPriceService {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public KrakenPriceService(SimpMessagingTemplate messagingTemplate, KrakenAssetPairService krakenAssetPairService) {
+    public KrakenPriceService(SimpMessagingTemplate messagingTemplate,
+                              KrakenAssetPairService krakenAssetPairService) {
         this.krakenAssetPairService = krakenAssetPairService;
         this.messagingTemplate = messagingTemplate;
         this.executorService = Executors.newSingleThreadExecutor();
@@ -31,7 +32,9 @@ public class KrakenPriceService {
     public void connectToKraken() {
         executorService.execute(() -> {
             try {
-                WebSocketClient client = new KrakenWebSocketClient(new URI("wss://ws.kraken.com"), krakenAssetPairService, messagingTemplate);
+                WebSocketClient client = new KrakenWebSocketClient(new URI("wss://ws.kraken.com"),
+                                                                    krakenAssetPairService,
+                                                                    messagingTemplate);
                 client.setSocketFactory(SSLSocketFactory.getDefault());
                 client.connect();
             } catch (URISyntaxException e) {

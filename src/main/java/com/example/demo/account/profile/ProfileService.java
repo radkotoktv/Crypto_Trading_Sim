@@ -33,7 +33,7 @@ public class ProfileService {
             ProfileDTO dto = new ProfileDTO();
             dto.setId(p.getId());
             dto.setUsername(p.getUsername());
-            dto.setEmail(p.getEmail());          // Map only safe fields
+            dto.setEmail(p.getEmail());
             dto.setCreated_at(p.getCreated_at());
             return dto;
         });

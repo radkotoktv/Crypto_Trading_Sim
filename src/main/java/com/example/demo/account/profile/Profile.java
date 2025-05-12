@@ -9,7 +9,10 @@ public class Profile {
     private String email;
     private LocalDateTime created_at;
 
-    public Profile() {};
+    public Profile() {
+
+    }
+
     public Profile(String username, String password_hash, String email, LocalDateTime created_at) {
         this.username = username;
         this.password_hash = password_hash;

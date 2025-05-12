@@ -2,14 +2,20 @@ package com.example.demo.account.profile;
 
 import com.example.demo.account.balance.Balance;
 import com.example.demo.account.balance.BalanceRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.example.demo.account.profile.ProfileConstants.STARTING_BALANCE;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +31,7 @@ public class ProfileController {
     public ProfileDTO createProfile(@RequestBody ProfileCreateRequestDTO dto) {
         ProfileDTO createdProfile = profileService.createProfile(dto);
         if (createdProfile != null) {
-            Balance balance = new Balance(createdProfile.getId(), 10000.0);
+            Balance balance = new Balance(createdProfile.getId(), STARTING_BALANCE);
             balanceRepository.save(balance);
             return createdProfile;
         } else {

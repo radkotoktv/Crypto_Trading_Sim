@@ -14,6 +14,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import static com.example.demo.kraken.price.WebSocketClientConstants.AMOUNT_DISPLAYED;
+import static com.example.demo.kraken.price.WebSocketClientConstants.NAME_OFFSET;
+import static com.example.demo.kraken.price.WebSocketClientConstants.PRICE_OFFSET;
+
 public class KrakenWebSocketClient extends WebSocketClient {
     private final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -22,7 +26,9 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public KrakenWebSocketClient(URI serverUri, KrakenAssetPairService krakenAssetPairService, SimpMessagingTemplate messagingTemplate) {
+    public KrakenWebSocketClient(URI serverUri,
+                                 KrakenAssetPairService krakenAssetPairService,
+                                 SimpMessagingTemplate messagingTemplate) {
         super(serverUri);
         this.krakenAssetPairService = krakenAssetPairService;
         this.minHeap = new PriorityQueue<>();
@@ -57,7 +63,9 @@ public class KrakenWebSocketClient extends WebSocketClient {
                               "subscription": { "name": "ticker" }
                             }
                             """;
-        String joinedPairs = "\"" + String.join("\", \"", krakenAssetPairService.getAllTradingPairs()) + "\"";
+        String joinedPairs = "\"" +
+                            String.join("\", \"", krakenAssetPairService.getAllTradingPairs())
+                            + "\"";
         text = text.replace("\"PAIRS\"", "[" + joinedPairs + "]");
         send(text);
     }
@@ -76,7 +84,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
         try {
             int cIndex = json.indexOf("\"c\":[\"");
             if (cIndex == -1) return null;
-            int start = cIndex + 6;
+            int start = cIndex + PRICE_OFFSET;
             int end = json.indexOf("\"", start);
             return json.substring(start, end);
         } catch (Exception e) {
@@ -88,7 +96,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
         try {
             int tickerIndex = json.indexOf("\"ticker\"");
             if (tickerIndex == -1) return null;
-            int start = tickerIndex + 10;
+            int start = tickerIndex + NAME_OFFSET;
             int end = json.indexOf("/", start);
             if (end == -1) return null;
 
@@ -103,7 +111,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
             minHeap.remove(price);
             minHeap.add(price);
         } else {
-            if (minHeap.size() < 20) {
+            if (minHeap.size() < AMOUNT_DISPLAYED) {
                 minHeap.add(price);
             } else {
                 double min = Double.parseDouble(minHeap.peek().getPrice());

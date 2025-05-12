@@ -5,7 +5,10 @@ public class HoldingDTO {
     private Long crypto_id;
     private double quantity;
 
-    public HoldingDTO() {}
+    public HoldingDTO() {
+
+    }
+
     public HoldingDTO(Long user_id, Long crypto_id, double quantity) {
         this.user_id = user_id;
         this.crypto_id = crypto_id;

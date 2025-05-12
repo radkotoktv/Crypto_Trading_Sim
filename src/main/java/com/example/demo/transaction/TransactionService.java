@@ -19,8 +19,4 @@ public class TransactionService {
     public List<Transaction> getUserTransactions(Long userId) {
         return transactionRepository.findByUserId(userId);
     }
-
-    public List<Transaction> getUserTransactionsWithFilters(Long userId, Long cryptoId, String type) {
-        return transactionRepository.findByUserIdAndFilters(userId, cryptoId, type);
-    }
 }

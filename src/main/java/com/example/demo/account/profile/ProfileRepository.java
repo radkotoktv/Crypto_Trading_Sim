@@ -1,10 +1,12 @@
 package com.example.demo.account.profile;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,7 +23,11 @@ public class ProfileRepository {
 
         if (!exists) {
             String sql = "INSERT INTO users (username, password_hash, email, created_at) VALUES (?, ?, ?, ?)";
-            jdbcTemplate.update(sql, profile.getUsername(), profile.getPassword_hash(), profile.getEmail(), LocalDateTime.now());
+            jdbcTemplate.update(sql,
+                                profile.getUsername(),
+                                profile.getPassword_hash(),
+                                profile.getEmail(),
+                                LocalDateTime.now());
         }
         return !exists;
     }

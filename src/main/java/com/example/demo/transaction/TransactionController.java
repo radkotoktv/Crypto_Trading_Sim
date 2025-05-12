@@ -1,6 +1,11 @@
 package com.example.demo.transaction;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -21,13 +26,5 @@ public class TransactionController {
     @GetMapping("/user/{userId}")
     public List<Transaction> getUserTransactions(@PathVariable Long userId) {
         return transactionService.getUserTransactions(userId);
-    }
-
-    @GetMapping("/user/{userId}/filter")
-    public List<Transaction> getUserTransactionsWithFilters(
-            @PathVariable Long userId,
-            @RequestParam(required = false) Long cryptoId,
-            @RequestParam(required = false) String type) {
-        return transactionService.getUserTransactionsWithFilters(userId, cryptoId, type);
     }
 }

@@ -8,14 +8,29 @@ public class Price implements Comparable<Price> {
     private String price;
     private LocalDateTime timestamp;
 
-    public String getSymbol() { return symbol; }
-    public void setSymbol(String symbol) { this.symbol = symbol; }
+    public String getSymbol() {
+        return symbol;
+    }
 
-    public String getPrice() { return price; }
-    public void setPrice(String price) { this.price = price; }
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 
     @Override
     public String toString() {
@@ -37,7 +52,8 @@ public class Price implements Comparable<Price> {
 
     @Override
     public int compareTo(Price other) {
-        int priceComparison = Double.compare(Double.parseDouble(this.price), Double.parseDouble(other.price));
+        int priceComparison = Double.compare(Double.parseDouble(this.price),
+                                            Double.parseDouble(other.price));
         if (priceComparison != 0) {
             return priceComparison;
         }

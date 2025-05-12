@@ -4,7 +4,10 @@ public class Balance {
     Long user_id;
     Double balance;
 
-    public Balance() {}
+    public Balance() {
+
+    }
+
     public Balance(Long user_id, Double balance) {
         this.user_id = user_id;
         this.balance = balance;

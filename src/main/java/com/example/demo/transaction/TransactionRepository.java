@@ -30,17 +30,4 @@ public class TransactionRepository {
         String sql = "SELECT * FROM transactions WHERE user_id = ? ORDER BY created_at DESC";
         return jdbcTemplate.query(sql, new TransactionRowMapper(), userId);
     }
-
-    public List<Transaction> findByUserIdAndFilters(Long userId, Long cryptoId, String type) {
-        String sql = "SELECT * FROM transactions WHERE user_id = ? " +
-                (cryptoId != null ? "AND crypto_id = ? " : "") +
-                (type != null ? "AND type = ? " : "") +
-                "ORDER BY created_at DESC";
-
-        return jdbcTemplate.query(sql, new TransactionRowMapper(),
-                cryptoId != null && type != null ? new Object[]{userId, cryptoId, type} :
-                        cryptoId != null ? new Object[]{userId, cryptoId} :
-                                type != null ? new Object[]{userId, type} :
-                                        new Object[]{userId});
-    }
 }
