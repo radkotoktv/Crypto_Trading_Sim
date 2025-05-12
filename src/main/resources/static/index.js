@@ -85,8 +85,86 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById('sell-button').addEventListener("click", async () => {
-        // ...
-        updateBalanceDisplay();
+        try {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) {
+                alert('Please log in first');
+                return;
+            }
+
+            const cryptoSymbol = document.getElementById('crypto-symbol').value.trim().toUpperCase();
+            const quantity = parseFloat(document.getElementById('quantity').value);
+
+            if (!cryptoSymbol) {
+                alert('Please enter a cryptocurrency symbol');
+                return;
+            }
+
+            if (isNaN(quantity) || quantity <= 0) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+
+            const tableBody = document.getElementById("price-table-body");
+            const rows = tableBody.getElementsByTagName("tr");
+            let unitPrice = null;
+            let cryptoId = null;
+
+            for (let row of rows) {
+                if (row.cells[0].textContent.trim().toUpperCase() === cryptoSymbol) {
+                    unitPrice = parseFloat(row.cells[1].textContent);
+                    cryptoId = await getCryptoIdFromSymbol(cryptoSymbol);
+                    break;
+                }
+            }
+
+            if (!unitPrice) {
+                alert(`Could not find current price for ${cryptoSymbol}`);
+                return;
+            }
+
+
+            if (!cryptoId) {
+                alert(`Could not find ID for ${cryptoSymbol}`);
+                return;
+            }
+
+            const totalCost = quantity * unitPrice;
+
+            const transactionData = {
+                user_id: user.id,
+                crypto_id: cryptoId,
+                type: "sell",
+                quantity: quantity,
+                unit_price: unitPrice,
+                total_cost: totalCost
+            };
+
+            console.log('Transaction data:', transactionData);
+
+            const response = await fetch('/api/sell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify(transactionData)
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+
+            const result = await response.json();
+            document.getElementById('transaction-status').textContent = 'Sale successful!';
+            console.log('Transaction created:', result);
+
+            updateBalanceDisplay();
+
+        } catch (error) {
+            console.error('Transaction error:', error);
+            document.getElementById('transaction-status').textContent = 'Error: ' + error.message;
+        }
     });
 
 

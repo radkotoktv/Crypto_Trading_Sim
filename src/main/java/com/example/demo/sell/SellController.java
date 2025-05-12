@@ -1,4 +1,4 @@
-package com.example.demo.buy;
+package com.example.demo.sell;
 
 import com.example.demo.account.balance.BalanceService;
 import com.example.demo.holding.Holding;
@@ -7,14 +7,17 @@ import com.example.demo.transaction.TransactionDTO;
 import com.example.demo.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-public class BuyController {
+public class SellController {
     @Autowired
     private BalanceService balanceService;
     @Autowired
@@ -22,8 +25,8 @@ public class BuyController {
     @Autowired
     private TransactionService transactionService;
 
-    @PostMapping("/buy")
-    public ResponseEntity<?> buyCrypto(@RequestBody TransactionDTO transaction) {
+    @PostMapping("/sell")
+    public ResponseEntity<?> sellCrypto(@RequestBody TransactionDTO transaction) {
         try {
             if (transaction.getUser_id() == null || transaction.getCrypto_id() == null) {
                 return ResponseEntity.badRequest().body(
@@ -31,38 +34,29 @@ public class BuyController {
                 );
             }
 
-            double currentBalance = balanceService.getBalance(transaction.getUser_id());
-            double totalCost = transaction.getUnit_price() * transaction.getQuantity();
-
-            if (currentBalance < totalCost) {
+            Holding holding = holdingService.getHoldingsById(transaction.getUser_id())
+                    .stream()
+                    .filter(h -> h.getCrypto_id().equals(transaction.getCrypto_id()))
+                    .toList()
+                    .getFirst();
+            double sellingAmount = transaction.getQuantity();
+            if (holding.getQuantity() < sellingAmount) {
                 return ResponseEntity.badRequest().body(
                         Map.of(
                                 "error", "Insufficient funds",
-                                "currentBalance", currentBalance,
-                                "required", totalCost
+                                "currentBalance", holding.getQuantity(),
+                                "required", sellingAmount
                         )
                 );
             }
 
-            double newBalance = currentBalance - totalCost;
+            double newBalance = (transaction.getUnit_price() * sellingAmount) + balanceService.getBalance(transaction.getUser_id());
             balanceService.saveBalance(transaction.getUser_id(), newBalance);
-
-            List<Holding> holdings = holdingService.getHoldingsById(transaction.getUser_id())
-                    .stream()
-                    .filter(h -> h.getCrypto_id().equals(transaction.getCrypto_id()))
-                    .toList();
-
-            double existingHolding = 0;
-            if (!holdings.isEmpty()) {
-                existingHolding = holdings.getFirst().getQuantity();
-            } else {
-                existingHolding = 0;
-            }
 
             holdingService.saveHolding(
                     transaction.getUser_id(),
                     transaction.getCrypto_id(),
-                    transaction.getQuantity() + existingHolding
+                    holding.getQuantity() - sellingAmount
             );
 
             TransactionDTO createdTransaction = transactionService.createTransaction(
@@ -72,7 +66,7 @@ public class BuyController {
                             transaction.getType(),
                             transaction.getQuantity(),
                             transaction.getUnit_price(),
-                            totalCost
+                            (sellingAmount * transaction.getUnit_price())
                     )
             );
 
