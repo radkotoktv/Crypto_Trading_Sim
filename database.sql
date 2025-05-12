@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     type ENUM('buy', 'sell') NOT NULL,
     quantity DECIMAL(20, 8) NOT NULL,
     unit_price DECIMAL(20, 8) NOT NULL, -- price per 1 coin in USD
-    total_cost DECIMAL(20, 8) NOT NULL,
+    total_cost DECIMAL(20, 8) GENERATED ALWAYS AS (quantity * unit_price) STORED,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (crypto_id) REFERENCES cryptocurrencies(id),
