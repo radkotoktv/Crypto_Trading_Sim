@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
         try {
             const response = await fetch('/api/assetpairs');
 
@@ -11,9 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             document.getElementById("status").textContent = "Error: " + error.message;
             console.error("Error:", error);
+            return; // stop execution if fetch failed
         }
-
-        event.preventDefault();
 
         const userData = {
             username: document.getElementById('username').value,
@@ -22,25 +23,25 @@ document.addEventListener('DOMContentLoaded', function() {
             created_at: new Date().toISOString()
         };
 
-        fetch('/api/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData)
-        })
-        .then(response => {
-            if (!response.ok) {
+        try {
+            const createResponse = await fetch('/api/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!createResponse.ok) {
                 throw new Error('Account creation failed');
             }
-            return response.json();
-        })
-        .then(data => {
+
+            const data = await createResponse.json();
             alert('Account created successfully!');
             window.location.href = 'login.html';
-        })
-        .catch(error => {
+
+        } catch (error) {
             alert('Error: ' + error.message);
-        });
+        }
     });
 });
