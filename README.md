@@ -25,7 +25,7 @@
 
 # USAGE INSTRUCTIONS:
 
-1) Go to http://localhost:8080/register.html
+1) Go to http://localhost:8080/signup.html
 2) Create an account
 3) Log in
 4) On the dashboard, you can see the top 20 cryptocurrencies by price, updated in real time
