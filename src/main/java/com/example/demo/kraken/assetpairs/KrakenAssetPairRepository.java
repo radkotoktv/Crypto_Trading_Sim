@@ -28,6 +28,12 @@ public class KrakenAssetPairRepository {
         });
     }
 
+    public String findNameById(Long id) {
+        String sql = "SELECT * FROM cryptocurrencies WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            return rs.getString("name");
+        });
+    }
 
 
 }

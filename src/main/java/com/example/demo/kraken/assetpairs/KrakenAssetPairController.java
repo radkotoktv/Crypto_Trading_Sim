@@ -3,8 +3,6 @@ package com.example.demo.kraken.assetpairs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api")
 public class KrakenAssetPairController {
@@ -21,4 +19,10 @@ public class KrakenAssetPairController {
     public Long getIdByName(@RequestParam String name) {
         return krakenAssetPairService.getIdByName(name);
     }
+
+    @GetMapping("/name")
+    public String getNameById(@RequestParam Long id) {
+        return krakenAssetPairService.getNameById(id);
+    }
+
 }

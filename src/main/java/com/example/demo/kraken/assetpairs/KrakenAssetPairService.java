@@ -79,4 +79,10 @@ public class KrakenAssetPairService {
         return krakenAssetPairRepository.findIdByName(name);
     }
 
+    public String getNameById(Long id) {
+        return krakenAssetPairRepository.findNameById(id);
+    }
+
+
+
 }
