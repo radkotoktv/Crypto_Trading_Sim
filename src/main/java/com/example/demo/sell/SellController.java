@@ -56,7 +56,7 @@ public class SellController {
             holdingService.saveHolding(
                     transaction.getUser_id(),
                     transaction.getCrypto_id(),
-                    holding.getQuantity() - sellingAmount
+                    -transaction.getQuantity()
             );
 
             TransactionDTO createdTransaction = transactionService.createTransaction(

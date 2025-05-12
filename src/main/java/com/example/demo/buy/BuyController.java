@@ -62,7 +62,7 @@ public class BuyController {
             holdingService.saveHolding(
                     transaction.getUser_id(),
                     transaction.getCrypto_id(),
-                    transaction.getQuantity() + existingHolding
+                    transaction.getQuantity()
             );
 
             TransactionDTO createdTransaction = transactionService.createTransaction(
